@@ -1,6 +1,7 @@
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter
 
 from src.app.schemas.voice import InstructionPayload, InstructionRequest
+from src.app.services.groq_client import route_instruction as _route_instruction
 
 router = APIRouter(tags=["instruction"])
 
@@ -9,8 +10,4 @@ router = APIRouter(tags=["instruction"])
 def route_instruction(
     payload: InstructionRequest,
 ) -> InstructionPayload:
-    _ = payload
-    raise HTTPException(
-        status_code=status.HTTP_501_NOT_IMPLEMENTED,
-        detail="Template endpoint pending implementation: POST /instruction",
-    )
+    return _route_instruction(payload.transcription)

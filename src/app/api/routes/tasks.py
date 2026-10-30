@@ -1,19 +1,25 @@
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, status
 
 from src.app.schemas.voice import Task, TaskCreate, TaskReplace, TaskUpdate
+from src.app.services.task_store import (
+    create_task as _create_task,
+    delete_task as _delete_task,
+    list_tasks,
+    replace_task as _replace_task,
+    update_task as _update_task,
+)
 
 router = APIRouter(prefix="/tasks", tags=["tasks"])
 
 
 @router.get("", response_model=list[Task])
 def get_tasks() -> list[Task]:
-    raise_not_implemented("GET /tasks")
+    return list_tasks()
 
 
 @router.post("", response_model=Task, status_code=status.HTTP_201_CREATED)
 def create_task(payload: TaskCreate) -> Task:
-    _ = payload
-    raise_not_implemented("POST /tasks")
+    return _create_task(payload)
 
 
 @router.put("/{task_id}", response_model=Task)
@@ -21,8 +27,7 @@ def replace_task(
     task_id: int,
     payload: TaskReplace,
 ) -> Task:
-    _ = (task_id, payload)
-    raise_not_implemented("PUT /tasks/{task_id}")
+    return _replace_task(task_id, payload)
 
 
 @router.patch("/{task_id}", response_model=Task)
@@ -30,18 +35,9 @@ def update_task(
     task_id: int,
     payload: TaskUpdate,
 ) -> Task:
-    _ = (task_id, payload)
-    raise_not_implemented("PATCH /tasks/{task_id}")
+    return _update_task(task_id, payload)
 
 
 @router.delete("/{task_id}")
 def delete_task(task_id: int) -> dict[str, str]:
-    _ = task_id
-    raise_not_implemented("DELETE /tasks/{task_id}")
-
-
-def raise_not_implemented(endpoint: str) -> None:
-    raise HTTPException(
-        status_code=status.HTTP_501_NOT_IMPLEMENTED,
-        detail=f"Template endpoint pending implementation: {endpoint}",
-    )
+    return _delete_task(task_id)
